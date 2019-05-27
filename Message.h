@@ -1,14 +1,25 @@
 #pragma once
 #include <access_MQTT.h>
 #include <DHTesp.h>
+#include <SoftwareSerial.h>
+#include <string.h>
+#include <stdio.h>
+#include <Display_RFID.h>
+
+#define SIM800_TX_PIN D0
+#define SIM800_RX_PIN D8
+
+SoftwareSerial mySerial(SIM800_TX_PIN, SIM800_RX_PIN);
 DHTesp dht;
+
 float temp;
 float humid;
-char message[6][20] = { "HELLO","WHAT R U DOING","EATEN RICE YET?","TEMPER:    ","HUMID:    " ,"QUIT MESSAGE" };
+char message[6][16] = { "HELLO","WHAT R U DOING","EATEN RICE YET?","TEMPER:    ","HUMID:     " ,"QUIT MESSAGE" };
+
 void change_to_char(char *temp_c, int pointer)
 {
 	int TEMP;
-	(pointer == 3) ? TEMP = temp*100 : TEMP = humid*100;
+	(pointer == 3) ? TEMP = temp * 100 : TEMP = humid * 100;
 	for (int i = 0; i < 2; i++)
 	{
 		char c = TEMP % 10 + 48;
@@ -23,33 +34,81 @@ void change_to_char(char *temp_c, int pointer)
 		temp_c[1 - i] = c;
 	}
 }
+
 void check_DHT()
 {
 	humid = dht.getHumidity();
 	temp = dht.getTemperature();
 }
-void send_mess( int pointer, bool MQTT_status, bool & MS_trig)
+
+void updateSerial()
 {
-	if (MQTT_status==false && MS_trig)
+	delay(500);
+	while (Serial.available())
+		mySerial.write(Serial.read());
+	while (mySerial.available())
+		Serial.write(mySerial.read());
+}
+
+void send_mess(int pointer, bool MQTT_status, bool & MS_trig)
+{
+	if (MQTT_status == false && MS_trig)
 	{
 		MS_trig = false;
-		delay(1000);
+		mySerial.println("AT"); //Once the handshake test is successful, it will back to OK
+		updateSerial();
+		mySerial.println("AT+CMGF=1"); // Configuring TEXT mode
+		delay(500);
+		updateSerial();
+		//mySerial.println("AT+CSCS=\"GSM\"\r");
+		//delay(1000);
+		mySerial.println("AT+CMGS=\"+84923528618\"");
+		updateSerial();
+		if (pointer == 4 || pointer == 3)
+		{
+			char temp_c[5] = "";
+			char Temp[16] = "";
+			strcpy(Temp, message[pointer]);
+			change_to_char(temp_c, pointer);
+			strcat(Temp, temp_c);
+			mySerial.print(Temp); //text content
+			updateSerial();
+			mySerial.write((char)26);
+			delay(2000);
+			lcd.clear();
+			lcd.print("Sent SMS!!!");
+			lcd.setCursor(0, 1);
+			lcd.print(Temp);
+			delay(2000);
+		}
+		else {
+			mySerial.print(message[pointer]);
+			updateSerial();
+			mySerial.write((char)26);
+			delay(2000);
+			lcd.clear();
+			lcd.print("Sent SMS!!!");
+			lcd.setCursor(0, 1);
+			lcd.print(message[pointer]);
+			delay(2000);
+		}
 		Display(true, pointer, true, false, false, false);
 	}
-	else if (MS_trig && MQTT_status){
+	else if (MS_trig && MQTT_status) 
+	{
 		MS_trig = false;
 		lcd.clear();
 		if (pointer == 4 || pointer == 3)
 		{
 			char temp_c[5] = "";
-			char temp[16]="";
-			strcpy(temp, message[pointer]);
+			char Temp[16] = "";
+			strcpy(Temp, message[pointer]);
 			change_to_char(temp_c, pointer);
-			strcat(temp, temp_c);
-			MQTT.publish("From RFID", temp);
+			strcat(Temp, temp_c);
+			MQTT.publish("From RFID", Temp);
 			lcd.print("Sent to server");
 			lcd.setCursor(0, 1);
-			lcd.print(temp);
+			lcd.print(Temp);
 			delay(2000);
 		}
 		else {
@@ -61,5 +120,4 @@ void send_mess( int pointer, bool MQTT_status, bool & MS_trig)
 		}
 		Display(true, pointer, true, false, false, false);
 	}
-	
 }

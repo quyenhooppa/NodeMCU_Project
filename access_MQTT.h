@@ -3,11 +3,14 @@
 #include <NTPClient.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
+#include <Display_RFID.h>
 bool WF_status = false;
 bool WF_trig = false;
 bool MQTT_status = false;
 bool MQTT_trig = false;
 bool MS_trig = false;
+bool Users_trig = false;
+bool allow_add_del = false;
 
 
 WiFiClient cli;
@@ -139,4 +142,3 @@ void access_MQTT(int pointer)
 		Display(true, pointer, false, false, WF_status, MQTT_status);
 	}
 }
-

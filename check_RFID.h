@@ -3,7 +3,8 @@
 #include <Display_RFID.h>
 MFRC522 mfrc522(2, HIGH);   // Create MFRC522 instance.
 #define MASTER "30 D7 52 73"
-	
+#define NUM_OF_USERS 6
+
 String RFID_read()
 {
 	//===================Show UID on serial monitor=====================
@@ -23,17 +24,26 @@ String RFID_read()
 	return content.substring(1);
 }
 
-void checkAccess(String uid, bool &access_allow)
+void checkAccess(bool &access_allow)
 {
+	String uid = "";
+	uid = RFID_read();
+	int access = false;
 		//====================check id=======================================
-		if (uid == MASTER) //change UID of the card that you want to give access // master
+	for (int i = 0; i < NUM_OF_USERS - 1; i++) if (uid == MASTER || uid == users[i]) access = true;
+		if (access) //change UID of the card that you want to give access // master
 		{
 			lcd.clear();
 			//=====================cout welcome===============
 			lcd.setCursor(3, 0);
 			lcd.println(" Welcome       ");
 			lcd.setCursor(0, 1);
-			lcd.println("Mr.Khoa Handsome ");
+			if(uid==MASTER) lcd.println("Mr.Khoa Handsome ");
+			else
+			{
+				lcd.setCursor(2,1);
+				lcd.print(uid);
+			}
 			delay(2000);
 			//====================cout have a nice day=======
 			lcd.clear();
