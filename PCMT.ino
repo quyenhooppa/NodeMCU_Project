@@ -4,7 +4,8 @@
 #include <check_RFID.h>
 #include <ControlUsers.h>
 #define button_PIN A0
-    
+
+#define LED_OUTPUT D8
 
 bool access_allow=false;
 int pointer=0;
@@ -29,8 +30,8 @@ void setup()
   delay(1000);
   SPI.begin();      // Initiate  SPI bus
   mfrc522.PCD_Init();   // Initiate MFRC52
-  Wire.begin(D1,D2);
-  dht.setup(D3, DHTesp::DHT11);
+  Wire.begin(D2,D3);  
+  dht.setup(10, DHTesp::DHT11); // DHT pin SD3
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight 
   State.attach(0.1, check);

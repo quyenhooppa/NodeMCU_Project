@@ -7,7 +7,7 @@
 #include <Display_RFID.h>
 
 #define SIM800_TX_PIN D0
-#define SIM800_RX_PIN D8
+#define SIM800_RX_PIN D1
 
 SoftwareSerial mySerial(SIM800_TX_PIN, SIM800_RX_PIN);
 DHTesp dht;
