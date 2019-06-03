@@ -1,16 +1,16 @@
 #pragma once
 #include <access_MQTT.h>
-#include <DHTesp.h>
+//#include <DHTesp.h>
 #include <SoftwareSerial.h>
 #include <string.h>
 #include <stdio.h>
 #include <Display_RFID.h>
 
 #define SIM800_TX_PIN D0
-#define SIM800_RX_PIN D8
+#define SIM800_RX_PIN D1
 
 SoftwareSerial mySerial(SIM800_TX_PIN, SIM800_RX_PIN);
-DHTesp dht;
+//DHTesp dht;
 
 float temp;
 float humid;
@@ -37,8 +37,8 @@ void change_to_char(char *temp_c, int pointer)
 
 void check_DHT()
 {
-	humid = dht.getHumidity();
-	temp = dht.getTemperature();
+	//humid = dht.getHumidity();
+	//temp = dht.getTemperature();
 }
 
 void updateSerial()
@@ -55,9 +55,9 @@ void send_mess(int pointer, bool MQTT_status, bool & MS_trig)
 	if (MQTT_status == false && MS_trig)
 	{
 		MS_trig = false;
-		mySerial.println("AT"); //Once the handshake test is successful, it will back to OK
+		mySerial.println("AT");
 		updateSerial();
-		mySerial.println("AT+CMGF=1"); // Configuring TEXT mode
+		mySerial.println("AT+CMGF=1"); // TEXT mode
 		delay(500);
 		updateSerial();
 		//mySerial.println("AT+CSCS=\"GSM\"\r");

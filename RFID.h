@@ -26,19 +26,19 @@ private:
 void button_choose()
 {
 	int button_A0 = analogRead(A0);
-	if (button_A0 > 520 && button_A0 < 560 && state_pointer == false)
+	if (button_A0 > 500 && button_A0 < 600 && state_pointer == false)
 	{
 		button_pointer = HIGH;
 		state_pointer = true;
 	}
-	else if (button_A0 > 740 && button_A0 < 780 && state_press == false)
+	else if (button_A0 > 700 && button_A0 < 800 && state_press == false)
 	{
 		button_press = HIGH;
 		state_press = true;
 	}
-	else if ((button_A0 <= 520 || button_A0 >= 560) && state_pointer == true)
+	else if ((button_A0 <= 500 || button_A0 >= 600) && state_pointer == true)
 		state_pointer = false;
-	else if ((button_A0 <= 740 || button_A0 >= 780) && state_press == true)
+	else if ((button_A0 <= 700 || button_A0 >= 800) && state_press == true)
 		state_press = false;
 }
 

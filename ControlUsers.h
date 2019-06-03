@@ -106,6 +106,9 @@ void check_MASTER(bool& Users_trig, int& _menu_screen)
 }*/
 #define MASTER "30 D7 52 73"
 #define NUM_OF_USERS 6
+#include <stdlib.h>
+#include <string.h>
+
 void checkMaster(bool &Users_trig, int &menu_screen, int &pointer)
 {
 	
@@ -127,40 +130,72 @@ void checkMaster(bool &Users_trig, int &menu_screen, int &pointer)
 		{
 			Users_trig = false;
 			lcd.clear();
-			lcd.print("  Access Deied");
+			lcd.print("  Access Denied");
 			delay(2000);
 			Display(true, 4, false, false, WF_status, MQTT_status);  //pointer=3
 		}
 	}
 }
 
+void change_Char(char* number, int a)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        char c = a % 10 + 48;
+        a = a / 10;
+        number[i] = c;
+    }
+    return;
+}
+
 void controlUser(bool &allow_add_del, int pointer)
 {
-	if (allow_add_del&& mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial())
+    if (allow_add_del&& mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial())
 	{
 		String uid = "";
 		uid = RFID_read();
-		for (int i=0; i<NUM_OF_USERS-1; i++)
-			if (users[i] == uid && i!= pointer)
-			{
-				lcd.clear();
-				lcd.print("   EXIST CARD");
-				allow_add_del = false;
-				delay(1500);
-				Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
-			}
-			else if (users[i] == uid && i == pointer)
-			{
-				users[i] = "NULL";
-				lcd.clear();
-				lcd.print("DEL SUCCESSFULLY");
-				allow_add_del = false;
-				delay(1500);
-				Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
-			}
-		if (allow_add_del && uid !=MASTER)
+        if (uid == MASTER)
+        {
+            lcd.clear();
+            lcd.print("   EXISTED USER");
+            allow_add_del = false;
+            delay(1500);
+            Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
+        }
+        else
+        {
+            for (int i=0; i<NUM_OF_USERS-1; i++)
+                if (users[i] == uid && i != pointer)
+                {
+                    lcd.clear();
+                    lcd.print(" DEL WRONG USER ");
+                    allow_add_del = false;
+                    delay(1500);
+                    Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
+                }
+                else if (users[i] == uid && i == pointer)
+                {
+                    users[i] = " ";
+                    strcpy(ID_num[i], "EMPTY");
+                    lcd.clear();
+                    lcd.print("DEL SUCCESSFULLY");
+                    allow_add_del = false;
+                    delay(1500);
+                    Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
+                }
+        }
+		if (allow_add_del && uid != MASTER)
 		{
 			users[pointer] = uid;
+            strcpy(ID_num[pointer - 1],"           ");
+            /*int temp = rand() % 26 + 65;
+            strcat(ID_num[pointer], temp);
+            temp = rand() % 26 + 65;*/
+            strcat(ID_num[pointer - 1], "KTM2017");
+            int temp_i = rand() % 1000;
+            char temp_c[4] = " ";
+            change_Char(temp_c, temp_i);
+            strcat(ID_num[pointer - 1], temp_c);
 			lcd.clear();
 			lcd.print("ADD SUCCESSFULLY");
 			allow_add_del = false;
@@ -168,4 +203,6 @@ void controlUser(bool &allow_add_del, int pointer)
 			Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
 		}
 	}
+    //Read_EEPROM();
+    //Write_EEPROM();
 }

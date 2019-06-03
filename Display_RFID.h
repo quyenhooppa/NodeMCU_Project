@@ -1,9 +1,11 @@
 #pragma once
 
+//#include <EPROM.h>
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-String users[5] = {"NULL" ,"NULL","NULL","NULL","NULL" };
+String users[5] = {"" ,"","","","" };
+char ID_num[5][11] = {"EMPTY", "EMPTY", "EMPTY", "EMPTY", "EMPTY"};
 
 void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, bool _WF_status, bool _MQTT_status, float humid = 0, float temp = 0, int add_del = 0, int menu = 0)
 {
@@ -13,6 +15,7 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
 		lcd.print(" PLEASE INSERT   ");
 		lcd.setCursor(0, 1);
 		lcd.print("    YOUR ID               ");
+        //Write_EEPROM();
 	}
 	else if (access_allow == true && access_DHT == false)
 	{
@@ -118,57 +121,113 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
 			{
 			case 0:
 				lcd.clear();
-				lcd.setCursor(1,0);
-				lcd.print(users[0]);
-				lcd.setCursor(1,1);
-				lcd.print(users[1]);
-				lcd.setCursor(0,0);
-				lcd.print(">");
+                lcd.setCursor(0,0);
+                lcd.print(">:U1: ");
+				lcd.print(ID_num[0]);
+				lcd.setCursor(0,1);
+                lcd.print(" :U2: ");
+				lcd.print(ID_num[1]);
 				break;
 			case 1:
 				lcd.clear();
-				lcd.setCursor(1,0);
-				lcd.print(users[0]);
+				lcd.setCursor(0,0);
+                lcd.print(">:U2: ");
+                lcd.print(ID_num[1]);
 				lcd.setCursor(0,1);
-				lcd.print(">");
-				lcd.setCursor(1,1);
-				lcd.print(users[1]);
+                lcd.print(" :U3: ");
+				lcd.print(ID_num[2]);
 				break;
 			case 2:
 				lcd.clear();
-				lcd.setCursor(1, 0);
-				lcd.print(users[1]);
-				lcd.setCursor(0, 1);
-				lcd.print(">");
-				lcd.setCursor(1, 1);
-				lcd.print(users[2]);
+                lcd.setCursor(0,0);
+                lcd.print(">:U3: ");
+                lcd.print(ID_num[2]);
+                lcd.setCursor(0,1);
+                lcd.print(" :U4: ");
+                lcd.print(ID_num[3]);
 				break;
 			case 3:
 				lcd.clear();
-				lcd.setCursor(1, 0);
-				lcd.print(users[2]);
-				lcd.setCursor(0, 1);
-				lcd.print(">");
-				lcd.setCursor(1, 1);
-				lcd.print(users[3]);
+                lcd.setCursor(0,0);
+                lcd.print(">:U4: ");
+                lcd.print(ID_num[3]);
+                lcd.setCursor(0,1);
+                lcd.print(" :U5: ");
+                lcd.print(ID_num[4]);
 				break;
 			case 4:
 				lcd.clear();
-				lcd.setCursor(1, 0);
-				lcd.print(users[3]);
-				lcd.setCursor(0, 1);
-				lcd.print(">");
-				lcd.setCursor(1, 1);
-				lcd.print(users[4]);
+                lcd.setCursor(0,0);
+                lcd.print(">:U5: ");
+                lcd.print(ID_num[4]);
+                lcd.setCursor(0,1);
+                lcd.print(" :Quit CU");
 				break;
 			case 5:
 				lcd.clear();
-				lcd.setCursor(1,0);
-				lcd.print(users[4]);
+				lcd.setCursor(0,0);
+                lcd.print(" :U5: ");
+				lcd.print(ID_num[4]);
 				lcd.setCursor(0,1);
 				lcd.print(">:Quit CU        ");
 				break;
-			}
+			
+                
+                /*case 0:
+                    lcd.clear();
+                    lcd.setCursor(6,0);
+                    lcd.print(ID_num[0]);
+                    lcd.setCursor(6,1);
+                    lcd.print(ID_num[1]);
+                    lcd.setCursor(0,0);
+                    lcd.print(">:U1: ");
+                    lcd.setCursor(0,1);
+                    lcd.print(" :U2: ");
+                    break;
+                case 1:
+                    lcd.clear();
+                    lcd.setCursor(6,0);
+                    lcd.print(ID_num[0]);
+                    lcd.setCursor(0,1);
+                    lcd.print(">:U2: ");
+                    lcd.setCursor(6,1);
+                    lcd.print(ID_num[1]);
+                    break;
+                case 2:
+                    lcd.clear();
+                    lcd.setCursor(6, 0);
+                    lcd.print(ID_num[1]);
+                    lcd.setCursor(0, 1);
+                    lcd.print(">:U3: ");
+                    lcd.setCursor(6, 1);
+                    lcd.print(ID_num[2]);
+                    break;
+                case 3:
+                    lcd.clear();
+                    lcd.setCursor(6, 0);
+                    lcd.print(ID_num[2]);
+                    lcd.setCursor(0, 1);
+                    lcd.print(">:U4: ");
+                    lcd.setCursor(6, 1);
+                    lcd.print(ID_num[3]);
+                    break;
+                case 4:
+                    lcd.clear();
+                    lcd.setCursor(6, 0);
+                    lcd.print(ID_num[3]);
+                    lcd.setCursor(0, 1);
+                    lcd.print(">:U5: ");
+                    lcd.setCursor(6, 1);
+                    lcd.print(ID_num[4]);
+                    break;
+                case 5:
+                    lcd.clear();
+                    lcd.setCursor(6,0);
+                    lcd.print(ID_num[4]);
+                    lcd.setCursor(0,1);
+                    lcd.print(">:Quit CU        ");
+                    break;*/
+                }
 		}
 		/*else if (menu_screen == 2)
 		{
