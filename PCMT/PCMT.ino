@@ -11,8 +11,13 @@ bool access_allow = false;
 int pointer=0;
 int menu_screen = 0;
 bool access_DHT=false;
+<<<<<<< HEAD:PCMT/PCMT.ino
 char IDWF[]="KHANH VAN";
 char PASSWF[]="2512kvan";
+=======
+char IDWF[]="cuacao";
+char PASSWF[]="wifihuroi";
+>>>>>>> b232aeeee8237ede6ec1db66daee39b09142a3b1:PCMT.ino
 
 
 button _button(button_PIN);
@@ -33,7 +38,11 @@ void setup()
   SPI.begin();      // Initiate  SPI bus
   mfrc522.PCD_Init();   // Initiate MFRC52
   Wire.begin(D2,D3);  
+<<<<<<< HEAD:PCMT/PCMT.ino
   //dht.setup(10, DHTesp::DHT11); // DHT pin SD3
+=======
+  dht.setup(10, DHTesp::DHT11); // DHT pin SD3
+>>>>>>> b232aeeee8237ede6ec1db66daee39b09142a3b1:PCMT.ino
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight 
   State.attach(0.1, check);
