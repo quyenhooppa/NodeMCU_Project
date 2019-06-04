@@ -13,38 +13,46 @@
 //#include <check_RFID.h>
 #define NUM_OF_USERS 6
 
-int address_begin = 0x0F;
+int address_begin = 0x0F + 10;
 
-int users_save[5] = {5, 6, 7, 8, 9};
+int users_save[5] = {5, 25, 45, 65, 85};
 //bool allow_save = allow_access;
 
 
-void Write_EEPROM(bool allow_access, int menu_screen)
+void Write_EEPROM(bool _allow_access, int _menu_screen)
 {
     for (int i = 0; i < NUM_OF_USERS - 1; i++)
     {
-        for (int j = 0; j < users[i].length(); j++)
-            EEPROM.write(address_begin + users_save[i], users[i][j]);
-        for (int j = 0; j < 11; j++)
-            EEPROM.write(address_begin + 2 * users_save[i], ID_num[i][j]);
+        int j = 0;
+        for (j = 0; j < users[i].length(); j++)
+            EEPROM.put(address_begin + users_save[i] + j, users[i][j]);
+        EEPROM.put(address_begin + users_save[i] + j, '\0');
+        for (j = 0; j < 11; j++)
+            EEPROM.put(address_begin + 2 * users_save[i] + j, ID_num[i][j]);
+        EEPROM.put(address_begin + 2 * users_save[i] + j, '\0');
     }
-    EEPROM.write(address_begin, allow_access);
-    EEPROM.write(address_begin + 1, menu_screen);
+    EEPROM.put(address_begin, _allow_access);
+    int menu = _menu_screen;
+    menu = (menu == 2) ? menu : 0;
+    EEPROM.put(address_begin + 1, menu);
     EEPROM.commit();
     return;
 }
 
-void Read_EEPROM(bool& allow_access, int& menu_screen)
+void Read_EEPROM(bool& _allow_access, int& _menu_screen)
 {
     for (int i = 0; i < NUM_OF_USERS - 1; i++)
     {
-        for (int j = 0; j < users[i].length(); j++)
-            users[i][j] = users[i][j] + (char)EEPROM.read(address_begin + users_save[i]);
-        for (int j = 0; j < 11; j++)
+        int j = 0;
+        for (j = 0; j < users[i].length(); j++)
+            users[i][j] = EEPROM.read(address_begin + users_save[i] + j);
+        users[i][j] = '\0';
+        for (j = 0; j < 11; j++)
             ID_num[i][j] = ID_num[i][j] + (char)EEPROM.read(address_begin + 2 * users_save[i]);
+        ID_num[i][j] = '\0';
     }
-    allow_access = EEPROM.read(address_begin);
-    menu_screen = EEPROM.read(address_begin + 1);
+    _allow_access = EEPROM.read(address_begin);
+    _menu_screen = EEPROM.read(address_begin + 1);
     return;
 }
 

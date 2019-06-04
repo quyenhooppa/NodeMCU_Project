@@ -15,7 +15,7 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
 		lcd.print(" PLEASE INSERT   ");
 		lcd.setCursor(0, 1);
 		lcd.print("    YOUR ID               ");
-        //Write_EEPROM();
+        //Write_EEPROM(access_allow, menu_screen);
 	}
 	else if (access_allow == true && access_DHT == false)
 	{
@@ -229,47 +229,6 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
                     break;*/
                 }
 		}
-		/*else if (menu_screen == 2)
-		{
-			if (add_del == 0)
-			{
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.println(">: Add user                 ");
-				lcd.setCursor(0, 1);
-				lcd.println(" : Remove users             ");
-				menu = 0;
-			}
-			else if (add_del == 1)
-			{
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.println(" : Add user                 ");
-				lcd.setCursor(0, 1);
-				lcd.println(">: Remove user              ");
-				menu = 1;
-			}
-			else if (add_del == 2)
-			{
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.println("     Existed    ");
-			}
-			else if (add_del == 3)
-			{
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.println("     No card     ");
-			}
-			else if (add_del == 4)
-			{
-				lcd.clear();
-				lcd.setCursor(0, 0);
-				lcd.println("  Successfully   ");
-			}
-		}
-		*/
-	}
 	else 
 	{
 		lcd.clear();

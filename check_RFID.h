@@ -32,12 +32,17 @@ void checkAccess(bool &access_allow)
 		//====================check id=======================================
     int num = 0;
     if (uid == MASTER)
+    {
         access = true;
+        menu_screen = 0;
+    }
     else
         for (int i = 0; i < NUM_OF_USERS - 1; i++) if (uid == users[i])
         {
             access = true;
             num = i + 1;
+            menu_screen = 0;
+            
         }
     if (access) //change UID of the card that you want to give access // master
     {
@@ -50,7 +55,7 @@ void checkAccess(bool &access_allow)
         else
         {
             lcd.setCursor(2,1);
-            lcd.print("  USER ");
+            lcd.print(" USER NUMBER ");
             lcd.print(num);
         }
         delay(2000);
@@ -68,5 +73,6 @@ void checkAccess(bool &access_allow)
         lcd.println(" Access Denied    ");
         delay(2000);
     }
-    //Write_EEPPROM();
+    Write_EEPPROM(access_allow, menu_screen);
+    //EEPROM.commit();
 }

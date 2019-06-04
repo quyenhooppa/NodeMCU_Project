@@ -7,9 +7,9 @@
 #define button_PIN A0
 #define LED_OUTPUT D8
 
-bool access_allow=false;
+bool access_allow = false;
 int pointer=0;
-int menu_screen=0;
+int menu_screen = 0;
 bool access_DHT=false;
 char IDWF[]="KHANH VAN";
 char PASSWF[]="2512kvan";
@@ -37,10 +37,10 @@ void setup()
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight 
   State.attach(0.1, check);
-  Display(access_allow, pointer, menu_screen,false, false, false);
   EEPROM.begin(512);
-  Write_EEPROM(access_allow, menu_screen);
-  //Read_EEPROM(access_allow, menu_screen);
+  //Write_EEPROM(access_allow, menu_screen);
+  Read_EEPROM(access_allow, menu_screen);
+  Display(access_allow, pointer, menu_screen,false, false, false);
   //digitalWrite(LED_OUTPUT,HIGH);
 }
 
@@ -53,8 +53,8 @@ void loop() {
   checkMaster(Users_trig,menu_screen, pointer);
   send_mess(pointer, MQTT_status,MS_trig);
   controlUser(allow_add_del, pointer);
-  if (allow_add_del)
-    Write_EEPROM(access_allow, menu_screen);
+  //if (allow_add_del)
+    //Write_EEPROM(access_allow, menu_screen);
   if (access_allow == false)
   {
     Write_EEPROM(access_allow, menu_screen);

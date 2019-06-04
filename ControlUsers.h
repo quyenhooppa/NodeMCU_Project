@@ -150,6 +150,7 @@ void change_Char(char* number, int a)
 
 void controlUser(bool &allow_add_del, int pointer)
 {
+    //Read_EEPROM(access_allow, menu_screen);
     if (allow_add_del&& mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial())
 	{
 		String uid = "";
@@ -181,28 +182,28 @@ void controlUser(bool &allow_add_del, int pointer)
                     lcd.print("DEL SUCCESSFULLY");
                     allow_add_del = false;
                     delay(1500);
+                    Write_EEPROM(access_allow, menu_screen);
                     Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
                 }
         }
 		if (allow_add_del && uid != MASTER)
 		{
 			users[pointer] = uid;
-            strcpy(ID_num[pointer - 1],"           ");
+            strcpy(ID_num[pointer],"           ");
             /*int temp = rand() % 26 + 65;
             strcat(ID_num[pointer], temp);
             temp = rand() % 26 + 65;*/
-            strcat(ID_num[pointer - 1], "KTM2017");
+            strcat(ID_num[pointer], "KTM2017");
             int temp_i = rand() % 1000;
             char temp_c[4] = " ";
             change_Char(temp_c, temp_i);
-            strcat(ID_num[pointer - 1], temp_c);
+            strcat(ID_num[pointer], temp_c);
 			lcd.clear();
 			lcd.print("ADD SUCCESSFULLY");
 			allow_add_del = false;
 			delay(1500);
+            Write_EEPROM(access_allow, menu_screen);
 			Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
 		}
-	}
-    //Read_EEPROM();
-    //Write_EEPROM();
+    }
 }
