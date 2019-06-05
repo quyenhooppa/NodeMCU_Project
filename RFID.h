@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Message.h>
 #define NUM_OF_FEATURES 6
 #define NUM_OF_MESS 6
@@ -36,9 +37,9 @@ void button_choose()
 		button_press = HIGH;
 		state_press = true;
 	}
-	else if ((button_A0 <= 500 || button_A0 >= 600) && state_pointer == true)
+	else if ((button_A0 <= 520 || button_A0 >= 560) && state_pointer == true)
 		state_pointer = false;
-	else if ((button_A0 <= 700 || button_A0 >= 800) && state_press == true)
+	else if ((button_A0 <= 740 || button_A0 >= 780) && state_press == true)
 		state_press = false;
 }
 
@@ -46,7 +47,7 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 {
 	if (_access_allow==true)
 	{
-		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false)
+		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false && WF_trig == false && MQTT_trig == false)
 		{
 			button_pointer = LOW;
 			button_press = LOW;

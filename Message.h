@@ -1,4 +1,5 @@
 #pragma once
+
 #include <access_MQTT.h>
 //#include <DHTesp.h>
 #include <SoftwareSerial.h>
@@ -16,7 +17,7 @@ float temp;
 float humid;
 char message[6][16] = { "HELLO","WHAT R U DOING","EATEN RICE YET?","TEMPER:    ","HUMID:     " ,"QUIT MESSAGE" };
 
-void change_to_char(char *temp_c, int pointer)
+void change_to_char(char *temp_c, int pointer) //convert temp and humid value to char
 {
 	int TEMP;
 	(pointer == 3) ? TEMP = temp * 100 : TEMP = humid * 100;
@@ -52,12 +53,12 @@ void updateSerial()
 
 void send_mess(int pointer, bool MQTT_status, bool & MS_trig)
 {
-	if (MQTT_status == false && MS_trig)
+	if (MQTT_status == false && MS_trig) //send to SMS when no wifi
 	{
 		MS_trig = false;
-		mySerial.println("AT");
+		mySerial.println("AT"); //Once the handshake test is successful, it will back to OK
 		updateSerial();
-		mySerial.println("AT+CMGF=1"); // TEXT mode
+		mySerial.println("AT+CMGF=1"); // Configuring TEXT mode
 		delay(500);
 		updateSerial();
 		//mySerial.println("AT+CSCS=\"GSM\"\r");
@@ -94,7 +95,7 @@ void send_mess(int pointer, bool MQTT_status, bool & MS_trig)
 		}
 		Display(true, pointer, true, false, false, false);
 	}
-	else if (MS_trig && MQTT_status) 
+	else if (MS_trig && MQTT_status) //send to server when wifi is connected
 	{
 		MS_trig = false;
 		lcd.clear();

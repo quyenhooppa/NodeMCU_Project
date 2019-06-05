@@ -15,13 +15,12 @@ bool allow_add_del = false;
 
 WiFiClient cli;
 void receive_Infor(char*tp, byte * nd, unsigned int length);
-PubSubClient MQTT("m16.cloudmqtt.com", 12069, receive_Infor, cli);
+PubSubClient MQTT("m16.cloudmqtt.com", 16357, receive_Infor, cli);
 
 void access_WF(char * ID, char *PASS, int pointer)
 {
 	if (WF_trig == true && WF_status==false)
 	{
-		WF_trig = false;
 		WiFi.begin(ID, PASS);
 		lcd.clear();
 		int watchDog = 0;
@@ -58,6 +57,7 @@ void access_WF(char * ID, char *PASS, int pointer)
 			delay(2000);
 			Display(true, pointer, false, false, WF_status, MQTT_status); // pointer=2
 		}
+        WF_trig = false;
 	}
 	else if (WF_trig == true && WF_status == true)
 	{
@@ -94,7 +94,6 @@ void access_MQTT(int pointer)
 {
 	if (MQTT_status == false && MQTT_trig == true)
 	{
-		MQTT_trig = false;
 		int watchDog = 0;
 		lcd.clear();
 		int count_dot = 0;
@@ -105,7 +104,7 @@ void access_MQTT(int pointer)
 			lcd.setCursor(count_dot, 1);
 			watchDog++;
 			delay(50);
-			if (!MQTT.connect("house_LPQ", "ennrrfxq", "hah29yfXMLKP"))
+			if (!MQTT.connect("Aquatic Tank", "bfglrgpa", "Xu7o8LYQCn4y"))
 				lcd.print(".");
 			else break;
 			count_dot = (count_dot + 1) % 16;
@@ -133,6 +132,7 @@ void access_MQTT(int pointer)
 			delay(2000);
 			Display(true, pointer, false, false, WF_status, MQTT_status);  //pointer=3
 		}
+        MQTT_trig = false;
 	}
 	else if ((MQTT_status == true && MQTT_trig == true)||(WF_status==false && MQTT_status==true))
 	{
