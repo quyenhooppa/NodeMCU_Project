@@ -11,6 +11,7 @@ bool MQTT_trig = false;
 bool MS_trig = false;
 bool Users_trig = false;
 bool allow_add_del = false;
+bool checkUser = false;
 
 
 WiFiClient cli;

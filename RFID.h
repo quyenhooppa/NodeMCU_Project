@@ -3,7 +3,7 @@
 #include <Message.h>
 #define NUM_OF_FEATURES 6
 #define NUM_OF_MESS 6
-#define NUM_OF_USERS 6
+#define NUM_OF_USERS 7
 class button
 {
 private:
@@ -23,6 +23,7 @@ private:
 	bool MS_trig;
 	bool Users_trig;
 	bool allow_add_del;
+	bool checkUsers;
 
 void button_choose()
 {
@@ -47,7 +48,8 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 {
 	if (_access_allow==true)
 	{
-		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false && WF_trig == false && MQTT_trig == false)
+		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false && WF_trig == false && MQTT_trig == false 
+			&& Users_trig==false && allow_add_del==false && checkUser==false)
 		{
 			button_pointer = LOW;
 			button_press = LOW;
@@ -73,7 +75,7 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 
 void control_users(int &_menu_screen)
 {
-	if (pointer == 5)
+	if (pointer == 6)
 	{
 		_menu_screen = 0;
 		pointer = 4;
@@ -83,18 +85,37 @@ void control_users(int &_menu_screen)
 	}
 	else
 	{
-		if (allow_add_del==false)
+		if (pointer == 0)
 		{
-			allow_add_del = true;
-			lcd.clear();
-			lcd.print("  INSERT YOUR");
-			lcd.setCursor(0, 1);
-			lcd.print("      CARD");
+			if (checkUsers == false)
+			{
+				checkUsers = true;
+				lcd.clear();
+				lcd.print("  INSERT YOUR");
+				lcd.setCursor(0, 1);
+				lcd.print("      CARD");
+			}
+			else if (checkUsers == true)
+			{
+				checkUsers = false;
+				Display(1, pointer, _menu_screen, access_DHT, WF_status, MQTT_status, humid, temp);
+			}
 		}
-		else if (allow_add_del)
+		else
 		{
-			allow_add_del = false;
-			Display(1, pointer, _menu_screen, access_DHT, WF_status, MQTT_status, humid, temp);
+			if (allow_add_del == false)
+			{
+				allow_add_del = true;
+				lcd.clear();
+				lcd.print("  INSERT YOUR");
+				lcd.setCursor(0, 1);
+				lcd.print("      CARD");
+			}
+			else if (allow_add_del)
+			{
+				allow_add_del = false;
+				Display(1, pointer, _menu_screen, access_DHT, WF_status, MQTT_status, humid, temp);
+			}
 		}
 		button_press = LOW;
 		button_pointer = LOW;
@@ -162,7 +183,7 @@ public:
 			A0 = _A0;
 	}
 	void update_button(int &_pointer, bool &_access_allow, int &_menu_screen, float _temp, float _humid, 
-		bool &_WF_trig, bool &_WF_status, bool &_MQTT_status, bool &_MQTT_trig, bool &_MS_trig, bool& _Users_trig, bool &_allow_add_del)
+		bool &_WF_trig, bool &_WF_status, bool &_MQTT_status, bool &_MQTT_trig, bool &_MS_trig, bool& _Users_trig, bool &_allow_add_del, bool &_checkUser)
 	{
 		button_choose();
 		allow_add_del = _allow_add_del;
@@ -173,6 +194,7 @@ public:
 		WF_status = _WF_status;
 		WF_trig = _WF_trig;
 		Users_trig = _Users_trig;
+		checkUsers = _checkUser;
 		temp = _temp;
 		humid = _humid;
 		change_state(_access_allow,  _menu_screen);
@@ -184,5 +206,6 @@ public:
 		_pointer = pointer;
 		_Users_trig = Users_trig;
 		_allow_add_del = allow_add_del;
+		_checkUser = checkUsers;
 	}
 };

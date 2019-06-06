@@ -1,7 +1,7 @@
 #pragma once
 
 #include <access_MQTT.h>
-//#include <DHTesp.h>
+#include <DHTesp.h>
 #include <SoftwareSerial.h>
 #include <string.h>
 #include <stdio.h>
@@ -11,7 +11,7 @@
 #define SIM800_RX_PIN D1
 
 SoftwareSerial mySerial(SIM800_TX_PIN, SIM800_RX_PIN);
-//DHTesp dht;
+DHTesp dht;
 
 float temp;
 float humid;
@@ -38,8 +38,8 @@ void change_to_char(char *temp_c, int pointer) //convert temp and humid value to
 
 void check_DHT()
 {
-	//humid = dht.getHumidity();
-	//temp = dht.getTemperature();
+	humid = dht.getHumidity();
+	temp = dht.getTemperature();
 }
 
 void updateSerial()
@@ -67,11 +67,13 @@ void send_mess(int pointer, bool MQTT_status, bool & MS_trig)
 		updateSerial();
 		if (pointer == 4 || pointer == 3)
 		{
-			char temp_c[5] = "";
-			char Temp[16] = "";
+			char temp_c[5] = " ";
+			char Temp[16] = " ";
 			strcpy(Temp, message[pointer]);
 			change_to_char(temp_c, pointer);
 			strcat(Temp, temp_c);
+			char a[1] = "";
+			strcat(Temp, a);
 			mySerial.print(Temp); //text content
 			updateSerial();
 			mySerial.write((char)26);

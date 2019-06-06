@@ -117,55 +117,62 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
         {
             switch (pointer)
             {
-                case 0:
-                    lcd.clear();
-                    lcd.setCursor(0,0);
-                    lcd.print(">:U1: ");
-                    lcd.print(ID_num[0]);
-                    lcd.setCursor(0,1);
-                    lcd.print(" :U2: ");
-                    lcd.print(ID_num[1]);
-                    break;
-                case 1:
-                    lcd.clear();
-                    lcd.setCursor(0,0);
-                    lcd.print(" :U1: ");
-                    lcd.print(ID_num[0]);
-                    lcd.setCursor(0,1);
-                    lcd.print(">:U2: ");
-                    lcd.print(ID_num[1]);
-                    break;
+				case 0:
+					lcd.clear();
+					lcd.setCursor(0, 0);
+					lcd.print(">:CHECK USERS ");
+					lcd.setCursor(0, 1);
+					lcd.print(" :U1 ");
+					lcd.print(ID_num[0]);
+					break;
+				case 1:
+					lcd.clear();
+					lcd.setCursor(0, 0);
+					lcd.print(" :CHECK USERS ");
+					lcd.setCursor(0, 1);
+					lcd.print(">:U1 ");
+					lcd.print(ID_num[0]);
+					break;
                 case 2:
                     lcd.clear();
                     lcd.setCursor(0,0);
-                    lcd.print(" :U2: ");
-                    lcd.print(ID_num[1]);
+                    lcd.print(" :U1 ");
+                    lcd.print(ID_num[0]);
                     lcd.setCursor(0,1);
-                    lcd.print(">:U3: ");
-                    lcd.print(ID_num[2]);
+                    lcd.print(">:U2 ");
+                    lcd.print(ID_num[1]);
                     break;
                 case 3:
                     lcd.clear();
                     lcd.setCursor(0,0);
-                    lcd.print(" :U3: ");
-                    lcd.print(ID_num[2]);
+                    lcd.print(" :U2 ");
+                    lcd.print(ID_num[1]);
                     lcd.setCursor(0,1);
-                    lcd.print(">:U4: ");
-                    lcd.print(ID_num[3]);
+                    lcd.print(">:U3 ");
+                    lcd.print(ID_num[2]);
                     break;
                 case 4:
                     lcd.clear();
                     lcd.setCursor(0,0);
-                    lcd.print(" :U4: ");
-                    lcd.print(ID_num[3]);
+                    lcd.print(" :U3 ");
+                    lcd.print(ID_num[2]);
                     lcd.setCursor(0,1);
-                    lcd.print(">:U5: ");
-                    lcd.print(ID_num[4]);
+                    lcd.print(">:U4 ");
+                    lcd.print(ID_num[3]);
                     break;
                 case 5:
                     lcd.clear();
                     lcd.setCursor(0,0);
-                    lcd.print(" :U5: ");
+                    lcd.print(" :U4 ");
+                    lcd.print(ID_num[3]);
+                    lcd.setCursor(0,1);
+                    lcd.print(">:U5 ");
+                    lcd.print(ID_num[4]);
+                    break;
+                case 6:
+                    lcd.clear();
+                    lcd.setCursor(0,0);
+                    lcd.print(" :U5 ");
                     lcd.print(ID_num[4]);
                     lcd.setCursor(0,1);
                     lcd.print(">:Quit CU        ");
@@ -181,7 +188,7 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
         lcd.setCursor(12, 0);
         lcd.println(temp, 1);
         lcd.setCursor(0, 1);
-        lcd.println("HUMID      :        ");
+		lcd.println("HUMID      :        ");
         lcd.setCursor(12, 1);
         lcd.println(humid, 1);
     }
