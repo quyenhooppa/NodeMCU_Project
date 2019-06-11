@@ -10,10 +10,20 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
 {
     if (access_allow == false && access_DHT == false)
     {
-        lcd.clear();
-        lcd.print(" PLEASE INSERT   ");
-        lcd.setCursor(0, 1);
-        lcd.print("    YOUR ID               ");
+        if (pointer == 0)
+        {
+            lcd.clear();
+            lcd.print(">:ACCESS BY CARD");
+            lcd.setCursor(0, 1);
+            lcd.print(" :ACCESS BY PIN");
+        }
+        else 
+        {
+            lcd.clear();
+            lcd.print(" :ACCESS BY CARD");
+            lcd.setCursor(0, 1);
+            lcd.print(">:ACCESS BY PIN");
+        }
     }
     else if (access_allow == true && access_DHT == false)
     {

@@ -19,66 +19,102 @@ String RFID_read()
 }
 
 
-void checkAccess(bool &access_allow, int &count)
+void checkAccess(bool &access_allow, int &count, bool &Access_trig) //bool& Access_trig)
 {
-    String uid = "";
-    uid = RFID_read();
-	int access = false;
-    int num = 0;
-		//====================check id=======================================
-	if (count == 3)
-    {
-        if (uid == MASTER)
-        {
-            access = true;
-            count = 0;
-        }
-    }
-    else
-    {
-        for (int i = 0; i < NUM_OF_USERS - 1; i++)
-            if (uid == MASTER || uid == users[i])
-            {
-                access = true;
-                num = i + 1;
-            }
-    }
-    if (access) //change UID of the card that you want to give access // master
-    {
-        lcd.clear();
-        //=====================cout welcome===============
-        lcd.setCursor(3, 0);
-        lcd.println(" Welcome       ");
-        lcd.setCursor(0, 1);
-        if (uid == MASTER) lcd.println("Mr.Khoa Handsome ");
-        else
-        {
-            lcd.setCursor(0,1);
-            lcd.print(" USER NUMBER ");
-            lcd.print(num);
-        }
-        delay(2000);
-        //====================cout have a nice day=======
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.println(" Have A NICE DAY            ");
-        delay(1500);
-        access_allow = true;
-        //===================cout temp and humid=========
-    }
-    else
-    {
-        lcd.clear();
-        lcd.println(" Access Denied    ");
-        delay(2000);
+        if (!mfrc522.PICC_IsNewCardPresent()) return;
+        if (!mfrc522.PICC_ReadCardSerial()) return; 
+        String uid = "";
+        uid = RFID_read();
+        int access = false;
+        int num = 0;
+            //====================check id=======================================
         if (count == 3)
         {
-            lcd.clear();
-            lcd.print("SYSTEM IS LOCKED");
-            lcd.setCursor(0,1);
-            lcd.print("  INSERT MASTER");
-            delay(2000);
+            if (uid == MASTER)
+            {
+                access = true;
+                count = 0;
+            }
         }
-        else count++;
+        else
+        {
+            for (int i = 0; i < NUM_OF_USERS - 1; i++)
+                if (uid == MASTER || uid == users[i])
+                {
+                    access = true;
+                    num = i + 1;
+                }
+        }
+        if (access) //change UID of the card that you want to give access // master
+        {
+            lcd.clear();
+            //=====================cout welcome===============
+            lcd.setCursor(3, 0);
+            lcd.println(" Welcome       ");
+            lcd.setCursor(0, 1);
+            if (uid == MASTER) lcd.println("Mr.Khoa Handsome ");
+            else
+            {
+                lcd.setCursor(0,1);
+                lcd.print(" USER NUMBER ");
+                lcd.print(num);
+            }
+            delay(2000);
+            //====================cout have a nice day=======
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.println(" Have A NICE DAY            ");
+            delay(1500);
+            access_allow = true;
+            Access_trig = false;
+            Display(access_allow, 0, 0,0,0,0, 0, 0);
+        
+            //===================cout temp and humid=========
+        }
+        else
+        {
+            lcd.clear();
+            lcd.println(" Access Denied    ");
+            delay(2000);
+            if (count == 3)
+            {
+                lcd.clear();
+                lcd.print("SYSTEM IS LOCKED");
+                lcd.setCursor(0,1);
+                lcd.print("  INSERT MASTER");
+                delay(2000);
+                Display(access_allow, 0, 0,0,0,0, 0, 0);
+            }
+            else count++;
+        }
+}
+
+void accessPin(bool& access_allow, int& allow_access_pin, bool& Pin_trig)
+{
+    if (allow_access_pin == 1)
+    {
+        lcd.clear();
+		lcd.setCursor(3, 0);
+        lcd.println(" Welcome       ");
+		lcd.setCursor(0,1);
+		lcd.println("Mr.Khoa Handsome ");
+		delay(2000);
+		lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.println(" Have A NICE DAY            ");
+        delay(1500);     
+        access_allow = true;
+        allow_access_pin = 2;
+        Pin_trig = false;
+        Display(access_allow, 0, 0,0,0,0, 0, 0);
+    }
+    else if (allow_access_pin == 0)
+    {
+        allow_access_pin = 2;
+        lcd.clear();
+		lcd.println(" Access Denied    ");
+        delay(2000);
+        Display(access_allow, 1, 0,0,0,0, 0, 0);
+        Pin_trig = false;
     }
 }

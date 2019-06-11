@@ -14,6 +14,9 @@ bool MS_trig = false;
 bool Users_trig = false;
 bool allow_add_del = false;
 bool checkUser = false;
+bool Access_trig = false;
+bool Pin_trig = false;
+int allow_access_pin = 2;
 
 //char Days[7][12] = {"MON", "TUES", "WED", "THURS", "FRI", "SAT", "SUN"};
 const long UTC = 25200;

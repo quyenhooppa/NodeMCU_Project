@@ -4,6 +4,11 @@
 #define NUM_OF_FEATURES 6
 #define NUM_OF_MESS 6
 #define NUM_OF_USERS 7
+
+String Pin = "0123456789 X O";
+String PassCode = "01234";
+char checkCode[100] = "";
+
 class button
 {
 private:
@@ -24,6 +29,10 @@ private:
 	bool Users_trig;
 	bool allow_add_del;
 	bool checkUsers;
+	bool Access_trig;
+	bool Pin_trig;
+	int countPass = 0;
+	int allow_access_pin;
 
 void button_choose()
 {
@@ -46,7 +55,7 @@ void button_choose()
 
 void change_state(bool &_access_allow,	int &_menu_screen)
 {
-	if (_access_allow==true)
+	if (_access_allow == true)
 	{
 		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false && WF_trig == false && MQTT_trig == false 
 			&& Users_trig==false && allow_add_del==false && checkUser==false)
@@ -70,6 +79,126 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 			case 2: control_users(_menu_screen); break;
 			}
 		}
+	}
+	else  
+	{
+		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false && WF_trig == false && MQTT_trig == false 
+			&& Users_trig==false && allow_add_del==false && checkUser==false && Pin_trig == false)
+		{
+			button_pointer = LOW;
+			button_press = LOW;
+			pointer = (pointer + 1) % 2;
+			Display(_access_allow, pointer, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
+		}
+		if (button_press == HIGH || (Pin_trig == true))
+		{
+			//if (Pin_trig == false)
+			//{
+				if (pointer == 0 && Pin_trig == false)
+				{
+					if (Access_trig == false)
+					{
+						lcd.clear();
+						lcd.print("  PLEASE INSERT");
+						lcd.setCursor(0,1);
+						lcd.print("   YOUR CARD");
+						Access_trig = true;
+					}
+					else
+					{
+						Display(_access_allow, pointer, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
+						Access_trig=false;
+					}	
+					button_press = LOW;
+				}
+				else if(pointer==1 || Pin_trig==true)
+				{
+					if (Pin_trig == false)
+					{
+							lcd.clear();
+							lcd.print("0123456789 X O ");
+							lcd.setCursor(0,1);
+							lcd.print("|");
+							lcd.setCursor(14,1);
+							lcd.print("0");
+							Pin_trig = true;
+							countPass = 0;
+							pointer=0;
+							button_press = LOW;
+					}
+					else 
+					{
+							if (button_pointer == HIGH) 
+							{
+								pointer = (pointer + 1) % 14;
+								lcd.clear();
+								lcd.print("0123456789 X O");
+								lcd.setCursor(pointer, 1);
+								lcd.print("|");
+								lcd.setCursor(14,1);
+								lcd.print(countPass);
+								button_pointer = LOW;
+							}
+							if (button_press == HIGH)
+							{
+								if (pointer == 13)
+								{
+									checkCode[countPass] = '\0';
+									bool check = true;
+									int i = 0;
+									char c = PassCode.charAt(i);
+									while (c != '\0')
+									{
+										if (checkCode[i++] != c)
+										{
+											check = false;
+											break;
+										}
+										c = PassCode.charAt(i);
+									}
+									if (check == true && checkCode[i] != '\0')
+										check = false;
+									if (check == false)
+									{
+										countPass = 0;
+										pointer = 1;
+										allow_access_pin = 0;
+										//Display(false, 1, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
+									}
+									else 
+									{
+										countPass = 0;
+										pointer = 0;
+										//_access_allow = true;
+										allow_access_pin = 1;
+										//Display(_access_allow, pointer, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
+									}
+								}
+								else if (pointer == 11)
+								{
+									checkCode[--countPass] = '\0';
+									if (countPass < 0) 
+										countPass = 0;
+									lcd.setCursor(14,1);
+									lcd.print(countPass);
+								}
+								else if (pointer >= 0 && pointer <= 9)
+								{
+									if (countPass >= 0) 
+									{	
+										checkCode[countPass++] = Pin[pointer];
+										lcd.setCursor(14,1);
+										lcd.print(countPass);
+									}
+								}
+								button_press = LOW;
+							}
+
+					}
+						
+				}			
+			//}
+		}		
 	}
 }
 
@@ -183,7 +312,8 @@ public:
 			A0 = _A0;
 	}
 	void update_button(int &_pointer, bool &_access_allow, int &_menu_screen, float _temp, float _humid, 
-		bool &_WF_trig, bool &_WF_status, bool &_MQTT_status, bool &_MQTT_trig, bool &_MS_trig, bool& _Users_trig, bool &_allow_add_del, bool &_checkUser)
+		bool &_WF_trig, bool &_WF_status, bool &_MQTT_status, bool &_MQTT_trig, bool &_MS_trig, bool& _Users_trig, 
+		bool &_allow_add_del, bool &_checkUser, bool& _Access_trig, bool& _Pin_trig, int &_allow_access_pin)
 	{
 		button_choose();
 		allow_add_del = _allow_add_del;
@@ -195,6 +325,9 @@ public:
 		WF_trig = _WF_trig;
 		Users_trig = _Users_trig;
 		checkUsers = _checkUser;
+		Access_trig = _Access_trig;
+		Pin_trig = _Pin_trig;
+		allow_access_pin = _allow_access_pin;
 		temp = _temp;
 		humid = _humid;
 		change_state(_access_allow,  _menu_screen);
@@ -207,5 +340,8 @@ public:
 		_Users_trig = Users_trig;
 		_allow_add_del = allow_add_del;
 		_checkUser = checkUsers;
+		_Access_trig = Access_trig;
+		_Pin_trig = Pin_trig;
+		_allow_access_pin = allow_access_pin;
 	}
 };
