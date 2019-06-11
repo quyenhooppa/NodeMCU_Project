@@ -15,7 +15,7 @@ int address_begin = 0x0F + 10;
 int users_save[5] = {5, 25, 45, 65, 85};
 int ID_save[5] = {110, 130, 150, 170, 190};
 
-void Write_EEPROM(bool _allow_access, int _menu_screen, String* _users)
+void Write_EEPROM(bool _allow_access, int _menu_screen, int _count, String* _users)
 {
     if (_allow_access == true)
     {
@@ -40,11 +40,12 @@ void Write_EEPROM(bool _allow_access, int _menu_screen, String* _users)
     int menu = _menu_screen;
     menu = (menu == 2) ? 2 : 0;
     EEPROM.put(address_begin + 1, menu);
+    EEPROM.put(address_begin + 2, _count);
     EEPROM.commit();
     return;
 }
 
-void Read_EEPROM(bool& _allow_access, int& _menu_screen, String* _users)
+void Read_EEPROM(bool& _allow_access, int& _menu_screen, int& _count, String* _users)
 {
     for (int i = 0; i < NUM_OF_USERS - 1; i++)
     {
@@ -63,5 +64,6 @@ void Read_EEPROM(bool& _allow_access, int& _menu_screen, String* _users)
     }
     _allow_access = EEPROM.read(address_begin);
     _menu_screen = EEPROM.read(address_begin + 1);
+    _count = EEPROM.read(address_begin + 2);
     return;
 }

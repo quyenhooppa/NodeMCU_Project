@@ -12,6 +12,15 @@ void check_exsit_user(bool &checkUser,int menu_screen)
 	{
 		String uid = "";
 		uid = RFID_read();
+        if (uid == MASTER)
+        {
+            lcd.clear();
+            lcd.print("IT'S MASTER CARD");
+            delay(2000);
+            Display(true, 0, menu_screen, false, WF_status, MQTT_status);  //pointer=3
+            return;
+        }
+        int count_users = 0;
 		for (int i = 0; i < NUM_OF_USERS; i++)
 			if (uid == users[i])
 			{
@@ -22,18 +31,30 @@ void check_exsit_user(bool &checkUser,int menu_screen)
 					arr[9] = (i+1) % 10 + 48;
 				lcd.print(arr);
 				checkUser = false;
+                count_users++;
 				delay(2000);
 				Display(true, 0, menu_screen, false, WF_status, MQTT_status);  //pointer=3
 				return;
 			}
-		lcd.clear();
-		lcd.print("THERE IS NO USER");
-		lcd.setCursor(0, 1);
-		lcd.print("  ALLOW TO ADD  ");
-		checkUser = false;
-		delay(2000);
-		Display(true, 0, menu_screen, false, WF_status, MQTT_status);  //pointer=3
-		return;
+        if (count_users < 5)
+        {
+            lcd.clear();
+            lcd.print("THERE IS NO USER");
+            lcd.setCursor(0, 1);
+            lcd.print("  ALLOW TO ADD  ");
+            checkUser = false;
+            delay(2000);
+            Display(true, 0, menu_screen, false, WF_status, MQTT_status);  //pointer=3
+            return;
+        }
+        lcd.clear();
+        lcd.print("  FULL USERS  ");
+        lcd.setCursor(0, 1);
+        lcd.print("  CAN NOT ADD  ");
+        checkUser = false;
+        delay(2000);
+        Display(true, 0, menu_screen, false, WF_status, MQTT_status);  //pointer=3
+        return;
 	}
 }
 void checkMaster(bool &Users_trig, int &menu_screen, int &pointer)
@@ -100,7 +121,7 @@ void controlUser(bool &allow_add_del, int pointer)
 			lcd.print("DEL SUCCESSFULLY");
 			allow_add_del = false;
 			delay(1500);
-			Write_EEPROM(true, 2, users);
+			Write_EEPROM(true, 2, 0, users);
 			Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer - 1=3
 		}
 		else
@@ -155,7 +176,7 @@ void controlUser(bool &allow_add_del, int pointer)
             lcd.print("ADD SUCCESSFULLY");
             allow_add_del = false;
             delay(1500);
-            Write_EEPROM(true, 2, users);
+            Write_EEPROM(true, 2, 0, users);
             Display(true, pointer, 2, false, WF_status, MQTT_status);  //pointer=3
         }
     }

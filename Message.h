@@ -1,7 +1,8 @@
 #pragma once
 
 #include <access_MQTT.h>
-#include <DHTesp.h>
+//#include <DHTesp.h>
+#include <DHT.h>
 #include <SoftwareSerial.h>
 #include <string.h>
 #include <stdio.h>
@@ -11,11 +12,13 @@
 #define SIM800_RX_PIN D1
 
 SoftwareSerial mySerial(SIM800_TX_PIN, SIM800_RX_PIN);
-DHTesp dht;
+//DHTesp dht;
+DHT dht(10, DHT11);
 
 float temp;
 float humid;
 char message[6][16] = { "HELLO","WHAT R U DOING","EATEN RICE YET?","TEMPER:    ","HUMID:     " ,"QUIT MESSAGE" };
+//String message[6] = { "HELLO","WHAT R U DOING","EATEN RICE YET?","TEMPER:    ","HUMID:    " ,"QUIT MESSAGE" };
 
 void change_to_char(char *temp_c, int pointer) //convert temp and humid value to char
 {
@@ -34,12 +37,15 @@ void change_to_char(char *temp_c, int pointer) //convert temp and humid value to
 		TEMP = TEMP / 10;
 		temp_c[1 - i] = c;
 	}
+	temp_c[5] = '\0';
 }
 
 void check_DHT()
 {
-	humid = dht.getHumidity();
-	temp = dht.getTemperature();
+	//humid = dht.getHumidity();
+	//temp = dht.getTemperature();
+	temp = (float)dht.readTemperature();
+	humid = (float)dht.readHumidity();
 }
 
 void updateSerial()
@@ -72,8 +78,7 @@ void send_mess(int pointer, bool MQTT_status, bool & MS_trig)
 			strcpy(Temp, message[pointer]);
 			change_to_char(temp_c, pointer);
 			strcat(Temp, temp_c);
-			char a[1] = "";
-			strcat(Temp, a);
+			Temp[16] = '\0';
 			mySerial.print(Temp); //text content
 			updateSerial();
 			mySerial.write((char)26);

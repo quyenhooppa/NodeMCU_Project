@@ -10,9 +10,10 @@
 bool access_allow=false;
 int pointer=0;
 int menu_screen=0;
+int count = 0;
 bool access_DHT=false;
-char IDWF[]="cuacao";
-char PASSWF[]="wifihuroi";
+char IDWF[]="BKHCM_OISP";
+char PASSWF[]="bachkhoaquocte@0219";
 
 button _button(button_PIN);
 Ticker State;
@@ -31,13 +32,14 @@ void setup()
   SPI.begin();      // Initiate  SPI bus
   mfrc522.PCD_Init();   // Initiate MFRC52
   Wire.begin(D2,D3);  
-  dht.setup(10, DHTesp::DHT11); // DHT pin SD3
+  //dht.setup(10, DHTesp::DHT11); // DHT pin SD3
+  dht.begin();
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight 
   State.attach(0.1, check);
   EEPROM.begin(512);
   //Write_EEPROM(false, 0, Users);
-  Read_EEPROM(access_allow, menu_screen, users);
+  Read_EEPROM(access_allow, menu_screen, count, users);
   Display(access_allow, pointer, menu_screen,false, false, false);
   //digitalWrite(LED_OUTPUT,HIGH);
 }
@@ -54,15 +56,15 @@ void loop() {
   controlUser(allow_add_del, pointer);
   if (access_allow == false)
   {
-    Write_EEPROM(access_allow, menu_screen, users);
+    Write_EEPROM(access_allow, menu_screen, count, users);
     // Look for new cards
     if (!mfrc522.PICC_IsNewCardPresent()) return;
     // Select one of the cards
     if (!mfrc522.PICC_ReadCardSerial()) return; 
-    checkAccess( access_allow);
-    Write_EEPROM(access_allow, menu_screen, users);
+    checkAccess( access_allow, count);
+    Write_EEPROM(access_allow, menu_screen, count, users);
     Display(access_allow, pointer, menu_screen, false, false,false);
   }
   if (menu_screen != 2 || menu_screen != 0 || access_DHT == true)
-    Write_EEPROM(access_allow, menu_screen, users); 
+    Write_EEPROM(access_allow, menu_screen, count, users); 
 } 

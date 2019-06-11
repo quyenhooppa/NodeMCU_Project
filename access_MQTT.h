@@ -2,8 +2,10 @@
 #include <WiFiUdp.h> 
 #include <NTPClient.h>
 #include <WiFiClient.h>
+#include <WifiUdp.h>
 #include <PubSubClient.h>
 #include <Display_RFID.h>
+
 bool WF_status = false;
 bool WF_trig = false;
 bool MQTT_status = false;
@@ -13,10 +15,15 @@ bool Users_trig = false;
 bool allow_add_del = false;
 bool checkUser = false;
 
+//char Days[7][12] = {"MON", "TUES", "WED", "THURS", "FRI", "SAT", "SUN"};
+const long UTC = 25200;
 
 WiFiClient cli;
+//WifiUdp udp;
+
 void receive_Infor(char*tp, byte * nd, unsigned int length);
-PubSubClient MQTT("m16.cloudmqtt.com", 16357, receive_Infor, cli);
+//PubSubClient MQTT("m16.cloudmqtt.com", 16357, receive_Infor, cli);
+PubSubClient MQTT("m16.cloudmqtt.com", 12069, receive_Infor, cli);
 
 void access_WF(char * ID, char *PASS, int pointer)
 {
@@ -105,7 +112,8 @@ void access_MQTT(int pointer)
 			lcd.setCursor(count_dot, 1);
 			watchDog++;
 			delay(50);
-			if (!MQTT.connect("Aquatic Tank", "bfglrgpa", "Xu7o8LYQCn4y"))
+			//if (!MQTT.connect("Aquatic Tank", "bfglrgpa", "Xu7o8LYQCn4y"))
+			if (!MQTT.connect("house_LPQ", "ennrrfxq", "hah29yfXMLKP"))
 				lcd.print(".");
 			else break;
 			count_dot = (count_dot + 1) % 16;

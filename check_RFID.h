@@ -19,19 +19,30 @@ String RFID_read()
 }
 
 
-void checkAccess(bool &access_allow)
+void checkAccess(bool &access_allow, int &count)
 {
     String uid = "";
     uid = RFID_read();
 	int access = false;
     int num = 0;
 		//====================check id=======================================
-	for (int i = 0; i < NUM_OF_USERS - 1; i++)
-        if (uid == MASTER || uid == users[i])
+	if (count == 3)
+    {
+        if (uid == MASTER)
         {
             access = true;
-            num = i + 1;
+            count = 0;
         }
+    }
+    else
+    {
+        for (int i = 0; i < NUM_OF_USERS - 1; i++)
+            if (uid == MASTER || uid == users[i])
+            {
+                access = true;
+                num = i + 1;
+            }
+    }
     if (access) //change UID of the card that you want to give access // master
     {
         lcd.clear();
@@ -60,5 +71,14 @@ void checkAccess(bool &access_allow)
         lcd.clear();
         lcd.println(" Access Denied    ");
         delay(2000);
+        if (count == 3)
+        {
+            lcd.clear();
+            lcd.print("SYSTEM IS LOCKED");
+            lcd.setCursor(0,1);
+            lcd.print("  INSERT MASTER");
+            delay(2000);
+        }
+        else count++;
     }
 }
