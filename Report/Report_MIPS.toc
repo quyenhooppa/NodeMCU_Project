@@ -1,0 +1,13 @@
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {section}{\numberline {2}Overall properties of the circuit}{1}{section.2}
+\contentsline {subsection}{\numberline {2.1}Function}{1}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Components}{1}{subsection.2.2}
+\contentsline {section}{\numberline {3}Instruction}{4}{section.3}
+\contentsline {subsection}{\numberline {3.1}How to control and move between tasks. }{4}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Access the system}{4}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Send message}{4}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Detect the current temperature and humid}{4}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Access Wifi}{4}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}Access Sever}{5}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}Control Users}{5}{subsection.3.7}
