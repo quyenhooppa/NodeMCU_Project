@@ -2,7 +2,7 @@
 #include <WiFiUdp.h> 
 #include <NTPClient.h>
 #include <WiFiClient.h>
-#include <WifiUdp.h>
+#include <WiFiUdp.h>
 #include <PubSubClient.h>
 #include <Display_RFID.h>
 
@@ -18,11 +18,11 @@ bool Access_trig = false;
 bool Pin_trig = false;
 int allow_access_pin = 2;
 
-//char Days[7][12] = {"MON", "TUES", "WED", "THURS", "FRI", "SAT", "SUN"};
+char Days[7][12] = {"SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"};
 const long UTC = 25200;
 
 WiFiClient cli;
-//WifiUdp udp;
+WiFiUDP udp;
 
 void receive_Infor(char*tp, byte * nd, unsigned int length);
 //PubSubClient MQTT("m16.cloudmqtt.com", 16357, receive_Infor, cli);

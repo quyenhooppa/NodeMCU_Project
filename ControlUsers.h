@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctime>
 
-void change_Char(char* number, int a);
+//void change_Char(char* number, int a);
 void check_exsit_user(bool &checkUser,int menu_screen)
 {
 	if (checkUser && mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial())
@@ -17,6 +17,7 @@ void check_exsit_user(bool &checkUser,int menu_screen)
             lcd.clear();
             lcd.print("IT'S MASTER CARD");
             delay(2000);
+            checkUser = false;
             Display(true, 0, menu_screen, false, WF_status, MQTT_status);  //pointer=3
             return;
         }

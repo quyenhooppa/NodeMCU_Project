@@ -40,7 +40,7 @@ void setup()
   lcd.backlight(); // Enable or Turn On the backlight 
   State.attach(0.1, check);
   EEPROM.begin(512);
-  //Write_EEPROM(false, 0, Users);
+  //Write_EEPROM(false, 0, 0, users);
   Read_EEPROM(access_allow, menu_screen, count, users);
   Display(access_allow, pointer, menu_screen,false, false, false);
   //digitalWrite(LED_OUTPUT,HIGH);
@@ -55,18 +55,27 @@ void loop() {
   checkMaster(Users_trig,menu_screen, pointer);
   send_mess(pointer, MQTT_status,MS_trig);
   controlUser(allow_add_del, pointer);
-  if (access_allow == false && Access_trig)
+  if (access_allow == false)
   {
-    Write_EEPROM(access_allow, menu_screen, count, users);
-    checkAccess(access_allow, count, Access_trig);
-    Write_EEPROM(access_allow, menu_screen, count, users);
-   
+    if (Access_trig)
+    {
+      Write_EEPROM(access_allow, menu_screen, count, users);
+      if (!mfrc522.PICC_IsNewCardPresent()) return;
+      if (!mfrc522.PICC_ReadCardSerial()) return; 
+      checkAccess(access_allow, count, Access_trig);
+      Write_EEPROM(access_allow, menu_screen, count, users);
+    }
+    else if (Pin_trig)
+    {
+      Write_EEPROM(access_allow, menu_screen, count, users);
+      accessPin(access_allow, allow_access_pin, Pin_trig);
+      Write_EEPROM(access_allow, menu_screen, count, users); 
+    }
   }
-  else if (access_allow == false && Pin_trig)
+  if (access_allow && count != 0) 
   {
+    count = 0;
     Write_EEPROM(access_allow, menu_screen, count, users);
-    accessPin(access_allow, allow_access_pin, Pin_trig);
-    Write_EEPROM(access_allow, menu_screen, count, users); 
   }
   if (menu_screen != 2 || menu_screen != 0 || access_DHT == true)
     Write_EEPROM(access_allow, menu_screen, count, users); 

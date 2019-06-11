@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Message.h>
-#define NUM_OF_FEATURES 6
+#define NUM_OF_FEATURES 7
 #define NUM_OF_MESS 6
 #define NUM_OF_USERS 7
 
@@ -92,112 +92,110 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 		}
 		if (button_press == HIGH || (Pin_trig == true))
 		{
-			//if (Pin_trig == false)
-			//{
-				if (pointer == 0 && Pin_trig == false)
+			if (pointer == 0 && Pin_trig == false)
+			{			
+				if (Access_trig == false)
 				{
-					if (Access_trig == false)
-					{
-						lcd.clear();
-						lcd.print("  PLEASE INSERT");
-						lcd.setCursor(0,1);
-						lcd.print("   YOUR CARD");
-						Access_trig = true;
-					}
-					else
-					{
-						Display(_access_allow, pointer, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
-						Access_trig=false;
-					}	
-					button_press = LOW;
+					lcd.clear();
+					lcd.print("  PLEASE INSERT");
+					lcd.setCursor(0,1);
+					lcd.print("   YOUR CARD");
+					Access_trig = true;
+					button_press = LOW;	
+					button_pointer = LOW;
 				}
-				else if(pointer==1 || Pin_trig==true)
+				else
 				{
-					if (Pin_trig == false)
+					Display(_access_allow, pointer, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
+					Access_trig=false;
+				}	
+			}
+			else if(pointer==1 || Pin_trig==true)
+			{
+				if (Pin_trig == false)
+				{
+						lcd.clear();
+						lcd.print("0123456789 X O ");
+						lcd.setCursor(0,1);
+						lcd.print("|");
+						lcd.setCursor(14,1);
+						lcd.print("0");
+						Pin_trig = true;
+						countPass = 0;
+						pointer=0;
+						button_press = LOW;
+				}
+				else 
+				{
+					if (button_pointer == HIGH) 
 					{
-							lcd.clear();
-							lcd.print("0123456789 X O ");
-							lcd.setCursor(0,1);
-							lcd.print("|");
-							lcd.setCursor(14,1);
-							lcd.print("0");
-							Pin_trig = true;
-							countPass = 0;
-							pointer=0;
-							button_press = LOW;
+						pointer = (pointer + 1) % 14;
+						lcd.clear();
+						lcd.print("0123456789 X O");
+						lcd.setCursor(pointer, 1);
+						lcd.print("|");
+						lcd.setCursor(14,1);
+						lcd.print(countPass);
+						button_pointer = LOW;
 					}
-					else 
+					if (button_press == HIGH)
 					{
-							if (button_pointer == HIGH) 
+						if (pointer == 13)
+						{
+							checkCode[countPass] = '\0';
+							bool check = true;
+							int i = 0;
+							char c = PassCode.charAt(i);
+							while (c != '\0')
 							{
-								pointer = (pointer + 1) % 14;
-								lcd.clear();
-								lcd.print("0123456789 X O");
-								lcd.setCursor(pointer, 1);
-								lcd.print("|");
+								if (checkCode[i++] != c)
+								{
+									check = false;
+									break;
+								}
+									c = PassCode.charAt(i);
+								}
+								if (check == true && checkCode[i] != '\0')
+									check = false;
+								if (check == false)
+								{
+									countPass = 0;
+									pointer = 1;
+									allow_access_pin = 0;
+									button_pointer = LOW;
+									button_pointer = LOW;
+								}
+								else 
+								{
+									countPass = 0;
+									pointer = 0;
+									//_access_allow = true;
+									allow_access_pin = 1;
+									button_pointer = LOW;
+									button_pointer = LOW;
+								}
+						}
+						else if (pointer == 11)
+						{
+							checkCode[--countPass] = '\0';
+							if (countPass < 0) 
+								countPass = 0;
+							lcd.setCursor(14,1);
+							lcd.print(countPass);
+						}
+						else if (pointer >= 0 && pointer <= 9)
+						{
+							if (countPass >= 0) 
+							{	
+								checkCode[countPass++] = Pin[pointer];
 								lcd.setCursor(14,1);
 								lcd.print(countPass);
-								button_pointer = LOW;
 							}
-							if (button_press == HIGH)
-							{
-								if (pointer == 13)
-								{
-									checkCode[countPass] = '\0';
-									bool check = true;
-									int i = 0;
-									char c = PassCode.charAt(i);
-									while (c != '\0')
-									{
-										if (checkCode[i++] != c)
-										{
-											check = false;
-											break;
-										}
-										c = PassCode.charAt(i);
-									}
-									if (check == true && checkCode[i] != '\0')
-										check = false;
-									if (check == false)
-									{
-										countPass = 0;
-										pointer = 1;
-										allow_access_pin = 0;
-										//Display(false, 1, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
-									}
-									else 
-									{
-										countPass = 0;
-										pointer = 0;
-										//_access_allow = true;
-										allow_access_pin = 1;
-										//Display(_access_allow, pointer, _menu_screen,access_DHT,WF_status,MQTT_status, humid, temp);
-									}
-								}
-								else if (pointer == 11)
-								{
-									checkCode[--countPass] = '\0';
-									if (countPass < 0) 
-										countPass = 0;
-									lcd.setCursor(14,1);
-									lcd.print(countPass);
-								}
-								else if (pointer >= 0 && pointer <= 9)
-								{
-									if (countPass >= 0) 
-									{	
-										checkCode[countPass++] = Pin[pointer];
-										lcd.setCursor(14,1);
-										lcd.print(countPass);
-									}
-								}
-								button_press = LOW;
-							}
-
+						}
+						button_press = LOW;
 					}
-						
-				}			
-			//}
+				}					
+			}			
 		}		
 	}
 }
@@ -301,6 +299,7 @@ void control_menu_screen(bool &_access_allow, int &_menu_screen)
 		button_press = LOW; button_press = LOW;
 		break;
 	case 5:
+	case 6:
 		_access_allow = false; pointer = 0; button_press = LOW; button_pointer = LOW; 
 		Display(_access_allow, pointer, _menu_screen, access_DHT, WF_status, MQTT_status, humid, temp); 
 		break;

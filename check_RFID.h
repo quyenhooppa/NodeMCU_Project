@@ -21,8 +21,6 @@ String RFID_read()
 
 void checkAccess(bool &access_allow, int &count, bool &Access_trig) //bool& Access_trig)
 {
-        if (!mfrc522.PICC_IsNewCardPresent()) return;
-        if (!mfrc522.PICC_ReadCardSerial()) return; 
         String uid = "";
         uid = RFID_read();
         int access = false;
@@ -75,13 +73,15 @@ void checkAccess(bool &access_allow, int &count, bool &Access_trig) //bool& Acce
         {
             lcd.clear();
             lcd.println(" Access Denied    ");
-            delay(2000);
+            Access_trig = false;
+            delay(1500);
+            Display(access_allow, 0, 0,0,0,0, 0, 0);
             if (count == 3)
             {
                 lcd.clear();
-                lcd.print("SYSTEM IS LOCKED");
+                lcd.print("CARD USER LOCKED");
                 lcd.setCursor(0,1);
-                lcd.print("  INSERT MASTER");
+                lcd.print(" INSERT MASTER");
                 delay(2000);
                 Display(access_allow, 0, 0,0,0,0, 0, 0);
             }

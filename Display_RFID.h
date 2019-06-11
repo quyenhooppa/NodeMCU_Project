@@ -6,7 +6,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 String users[5] = {"", "", "", "", "" };
 char ID_num[5][11] = {"EMPTY", "EMPTY", "EMPTY", "EMPTY", "EMPTY"};
 
-void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, bool _WF_status, bool _MQTT_status, float humid = 0, float temp = 0, int add_del = 0, int menu = 0)
+void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, 
+            bool _WF_status, bool _MQTT_status, float humid = 0, float temp = 0)
 {
     if (access_allow == false && access_DHT == false)
     {
@@ -71,10 +72,17 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, b
                     lcd.setCursor(13, 0);
                     (_WF_status == true) ? lcd.print("ON") : lcd.print("OFF");
                     break;
+                case 5:
+                    lcd.clear();
+                    lcd.setCursor(0,0);
+                    lcd.print(" :CONTROL USERS:          ");
+                    lcd.setCursor(0,1);
+                    lcd.print(">:DATE TIME:");
+                    lcd.setCursor(13, 0);
                 default:
                     lcd.clear();
                     lcd.setCursor(0, 0);
-                    lcd.print(" :CONTROL USERS           ");
+                    lcd.print(" :DATE TIME:");
                     lcd.setCursor(13, 0);
                     lcd.setCursor(0, 1);
                     lcd.print(">:QUIT     ");
