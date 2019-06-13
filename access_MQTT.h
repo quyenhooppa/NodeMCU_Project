@@ -1,8 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h> 
-#include <NTPClient.h>
+//#include <NTPClient.h>
 #include <WiFiClient.h>
-#include <WiFiUdp.h>
 #include <PubSubClient.h>
 #include <Display_RFID.h>
 
@@ -12,17 +11,14 @@ bool MQTT_status = false;
 bool MQTT_trig = false;
 bool MS_trig = false;
 bool Users_trig = false;
+bool Time_trig = false;
 bool allow_add_del = false;
 bool checkUser = false;
 bool Access_trig = false;
 bool Pin_trig = false;
 int allow_access_pin = 2;
 
-char Days[7][12] = {"SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"};
-const long UTC = 25200;
-
 WiFiClient cli;
-WiFiUDP udp;
 
 void receive_Infor(char*tp, byte * nd, unsigned int length);
 //PubSubClient MQTT("m16.cloudmqtt.com", 16357, receive_Infor, cli);

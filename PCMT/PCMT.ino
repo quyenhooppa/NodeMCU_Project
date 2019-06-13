@@ -12,16 +12,15 @@ int pointer=0;
 int menu_screen=0;
 int count = 0;
 bool access_DHT=false;
-char IDWF[]="BKHCM_OISP";
-char PASSWF[]="bachkhoaquocte@0219";
-
+char IDWF[]="AD";
+char PASSWF[]="987654321";
 button _button(button_PIN);
 Ticker State;
 void check()
 {
   _button.update_button(pointer,access_allow, menu_screen,temp, humid, 
   WF_trig,WF_status,MQTT_status, MQTT_trig,MS_trig, Users_trig, allow_add_del, 
-  checkUser, Access_trig, Pin_trig, allow_access_pin);
+  checkUser, Access_trig, Pin_trig, allow_access_pin, Time_trig);//, day, hr, mins, second);
 } 
 
 void setup() 
@@ -39,12 +38,14 @@ void setup()
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight 
   State.attach(0.1, check);
+  Time.begin();
   EEPROM.begin(512);
   //Write_EEPROM(false, 0, 0, users);
   Read_EEPROM(access_allow, menu_screen, count, users);
   Display(access_allow, pointer, menu_screen,false, false, false);
   //digitalWrite(LED_OUTPUT,HIGH);
 }
+//unsigned long int time1 = 0;
 
 void loop() {
   check_DHT();
@@ -55,6 +56,10 @@ void loop() {
   checkMaster(Users_trig,menu_screen, pointer);
   send_mess(pointer, MQTT_status,MS_trig);
   controlUser(allow_add_del, pointer);
+  if (Time_trig == true)
+  {
+    read_time(WF_status);
+  }
   if (access_allow == false)
   {
     if (Access_trig)

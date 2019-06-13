@@ -21,12 +21,14 @@ private:
 	bool access_DHT=false;
 	float humid;
 	float temp;
+	//int day, hr, mins, second;
 	float MQTT_status;
 	float MQTT_trig;
 	float WF_status;
 	float WF_trig;
 	bool MS_trig;
 	bool Users_trig;
+	bool Time_trig;
 	bool allow_add_del;
 	bool checkUsers;
 	bool Access_trig;
@@ -57,8 +59,9 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 {
 	if (_access_allow == true)
 	{
-		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false && WF_trig == false && MQTT_trig == false 
-			&& Users_trig==false && allow_add_del==false && checkUser==false)
+		if (button_pointer == HIGH && access_DHT == false && Users_trig==false && allow_add_del==false 
+			&& WF_trig == false && MQTT_trig == false 
+			&& Users_trig==false && allow_add_del==false && checkUser==false && Time_trig == false)
 		{
 			button_pointer = LOW;
 			button_press = LOW;
@@ -200,6 +203,7 @@ void change_state(bool &_access_allow,	int &_menu_screen)
 	}
 }
 
+
 void control_users(int &_menu_screen)
 {
 	if (pointer == 6)
@@ -299,6 +303,20 @@ void control_menu_screen(bool &_access_allow, int &_menu_screen)
 		button_press = LOW; button_press = LOW;
 		break;
 	case 5:
+		if (_menu_screen == 0)
+		{
+			if (Time_trig == false)
+            {
+				Time_trig = true;
+			} 
+			else if (Time_trig == true)
+			{
+				Time_trig = false;
+				Display(_access_allow, pointer, _menu_screen, access_DHT, WF_status, MQTT_status, humid, temp);
+			}
+			button_press = LOW; button_press = LOW;
+		}
+		break;
 	case 6:
 		_access_allow = false; pointer = 0; button_press = LOW; button_pointer = LOW; 
 		Display(_access_allow, pointer, _menu_screen, access_DHT, WF_status, MQTT_status, humid, temp); 
@@ -312,7 +330,8 @@ public:
 	}
 	void update_button(int &_pointer, bool &_access_allow, int &_menu_screen, float _temp, float _humid, 
 		bool &_WF_trig, bool &_WF_status, bool &_MQTT_status, bool &_MQTT_trig, bool &_MS_trig, bool& _Users_trig, 
-		bool &_allow_add_del, bool &_checkUser, bool& _Access_trig, bool& _Pin_trig, int &_allow_access_pin)
+		bool &_allow_add_del, bool &_checkUser, bool& _Access_trig, bool& _Pin_trig, int &_allow_access_pin,
+		bool& _Time_trig)
 	{
 		button_choose();
 		allow_add_del = _allow_add_del;
@@ -323,13 +342,16 @@ public:
 		WF_status = _WF_status;
 		WF_trig = _WF_trig;
 		Users_trig = _Users_trig;
+		Time_trig = _Time_trig;
 		checkUsers = _checkUser;
 		Access_trig = _Access_trig;
 		Pin_trig = _Pin_trig;
 		allow_access_pin = _allow_access_pin;
 		temp = _temp;
 		humid = _humid;
+
 		change_state(_access_allow,  _menu_screen);
+		
 		_MQTT_status= MQTT_status ;
 		_MQTT_trig = MQTT_trig;
 		_WF_status = WF_status;
@@ -337,6 +359,7 @@ public:
 		_MS_trig = MS_trig;
 		_pointer = pointer;
 		_Users_trig = Users_trig;
+		_Time_trig = Time_trig;
 		_allow_add_del = allow_add_del;
 		_checkUser = checkUsers;
 		_Access_trig = Access_trig;

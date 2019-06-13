@@ -2,12 +2,85 @@
 
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+#include <WiFiUdp.h>
+#include <NTPClient.h>
+
+const long UTC = 25200;
+WiFiUDP udp;
+NTPClient Time(udp, "pool.ntp.org", UTC);
+
+int hr;
+int mins;
+int second;
+int day;
+unsigned long int time1 = 0;
 
 String users[5] = {"", "", "", "", "" };
 char ID_num[5][11] = {"EMPTY", "EMPTY", "EMPTY", "EMPTY", "EMPTY"};
+char Days[7][12] = {"SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"};
+
+void read_time(bool _WF_status)
+{
+    if  (_WF_status)
+    {
+        Time.update();
+	    day = Time.getDay();
+  	    hr = Time.getHours();
+        mins = Time.getMinutes();
+        second = Time.getSeconds();
+        lcd.clear();
+        lcd.print("Current Day-Time");
+        lcd.setCursor(1,1);
+        lcd.print(Days[day]);
+        if (hr < 10)
+                {
+                    lcd.setCursor(7,1);
+                    lcd.print("0");
+                    lcd.print(hr);
+                }
+                else
+                {
+                    lcd.setCursor(7,1);
+                    lcd.print(hr);
+                }
+                lcd.print(":");
+                if (mins < 10)
+                {
+                    lcd.setCursor(10,1);
+                    lcd.print("0");
+                    lcd.print(mins);
+                }
+                else
+                {
+                    lcd.setCursor(10,1);
+                    lcd.print(mins);
+                }
+                lcd.print(":");
+                if (second < 10)
+                {
+                    lcd.setCursor(13,1);
+                    lcd.print("0");
+                    lcd.print(second);
+                }
+                else
+                {
+                    lcd.setCursor(13,1);
+                    lcd.print(second);
+                }
+                delay(1000);
+            }	
+    else 
+    {
+        lcd.clear();
+        lcd.print("NOT CONNECT WIFI");
+        lcd.setCursor(0,1);
+        lcd.print("CAN NOT GET TIME");
+        delay(1000);
+    }       
+}
 
 void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT, 
-            bool _WF_status, bool _MQTT_status, float humid = 0, float temp = 0)
+            bool _WF_status, bool _MQTT_status, float humid = 0, float temp = 0) 
 {
     if (access_allow == false && access_DHT == false)
     {
@@ -75,17 +148,20 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT,
                 case 5:
                     lcd.clear();
                     lcd.setCursor(0,0);
-                    lcd.print(" :CONTROL USERS:          ");
+                    lcd.print(" :CONTROL USERS          ");
                     lcd.setCursor(0,1);
-                    lcd.print(">:DATE TIME:");
-                    lcd.setCursor(13, 0);
+                    lcd.print(">:DAY & TIME: ");
+                    lcd.setCursor(13, 1);
+                    (_WF_status == true) ? lcd.print("ON") : lcd.print("OFF");
+                    break;
                 default:
                     lcd.clear();
                     lcd.setCursor(0, 0);
-                    lcd.print(" :DATE TIME:");
-                    lcd.setCursor(13, 0);
+                    lcd.print(" :DAY & TIME: ");
                     lcd.setCursor(0, 1);
                     lcd.print(">:QUIT     ");
+                    lcd.setCursor(13, 0);
+                    (_WF_status == true) ? lcd.print("ON") : lcd.print("OFF");                    
                     break;
             }
         }
@@ -197,8 +273,18 @@ void Display(bool access_allow, int pointer, int menu_screen, bool access_DHT,
                     break;
             }
         }
+        else if (menu_screen == 3)
+        {
+            unsigned long int time_millis = millis();
+            if (time_millis - time1 > 1000)
+            {
+                read_time(_WF_status);
+                delay(1000);
+                time1 = millis();
+            }
+        }
     }
-    else //show temp and humid
+    else //if (access_allow == true && access_DHT == true)//show temp and humid
     {
         lcd.clear();
         lcd.setCursor(0, 0);
